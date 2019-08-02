@@ -1,7 +1,8 @@
 # Motion-Planning-for-Autonomous-Cars-Quick-Reference
 Notes on various Motion Planning topics for Self Driving Car
 
-Written for my own use. The main file generated is called Motion_Planning_for_Autonomous_Cars__Quick_Reference.pdf.pdf
+Written for my own use. It is work in progress
+The main file generated is called Motion_Planning_for_Autonomous_Cars__Quick_Reference.pdf
 
 Notations are inconsistent and references are missing
 
