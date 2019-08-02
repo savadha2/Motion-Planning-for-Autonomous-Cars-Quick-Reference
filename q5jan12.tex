@@ -1,0 +1,63 @@
+%% Created by Maple 16.01 (IBM INTEL NT)
+%% Source Worksheet: Untitled (1)
+%% Generated: Fri Dec 04 14:55:04 2015
+%\documentclass{article}
+%\usepackage{maple2e}
+ %\def\emptyline{\vspace{12pt}}
+%\DefineParaStyle{Maple Output}
+%\DefineParaStyle{Maple Plot}
+%\DefineCharStyle{2D Math}
+%\DefineCharStyle{2D Output}
+%\begin{document}
+%\pagestyle{empty}
+\begin{maplegroup}
+\begin{mapleinput}
+\mapleinline{active}{1d}{restart;}{%
+}
+\end{mapleinput}
+
+\end{maplegroup}
+\begin{maplegroup}
+\begin{mapleinput}
+\mapleinline{active}{1d}{a:=Pi*r*sin(theta)-r^2*sin(2*theta);}{%
+}
+\end{mapleinput}
+
+\mapleresult
+\begin{maplelatex}
+\mapleinline{inert}{2d}{a := Pi*r*sin(theta)-r^2*sin(2*theta);}{%
+\[
+a := \pi \,r\,\mathrm{sin}(\theta ) - r^{2}\,\mathrm{sin}(2\,
+\theta )
+\]
+%
+}
+\end{maplelatex}
+
+\end{maplegroup}
+\begin{maplegroup}
+\begin{mapleinput}
+\mapleinline{active}{1d}{plot3d(a,r=0..1,theta=0..Pi,axes=boxed);}{%
+}
+\end{mapleinput}
+
+\mapleresult
+\begin{center}
+\mapleplot{q5jan1201.eps}
+\end{center}
+
+\end{maplegroup}
+\begin{maplegroup}
+\begin{mapleinput}
+\mapleinline{active}{1d}{?plot3d}{%
+}
+\end{mapleinput}
+
+\end{maplegroup}
+\begin{maplegroup}
+\begin{mapleinput}
+\end{mapleinput}
+
+\end{maplegroup}
+%\end{document}
+%% End of Maple 16.01 Output

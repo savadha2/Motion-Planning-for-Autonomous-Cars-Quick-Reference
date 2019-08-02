@@ -1,0 +1,35 @@
+% -------------------------------------------------------------------
+% Include Table of Contents in the Table of Contents
+% Change spacing
+% Modified by Alex, October 1994
+% Bug Fix: TOC Page number when TOC spans over one page (November, 1999)
+\newlength{\tclineskip}
+\setlength{\tclineskip}{\baselineskip}
+\def\@addcontentsline#1#2#3{\if@filesw \begingroup
+\let\label\@gobble \let\index\@gobble \let\glossary\@gobble
+\def\protect##1{\string\string\string##1\string\space
+   \space}\@temptokena{\thepage}%
+\edef\@tempa{\immediate\write
+\@auxout{\string\@writefile{#1}{\protect
+     \contentsline{#2}{#3}{\the\@temptokena}}}}\@tempa
+   \if@nobreak \ifvmode\nobreak\fi\fi\endgroup\fi}
+\def\tableofcontents{\@restonecolfalse\if@twocolumn\@restonecoltrue\onecolumn
+ 
+ \fi
+ \chapter*{\begin{center} CONTENTS\@mkboth{CONTENTS}{CONTENTS}\end{center}\vspace*{22pt}}
+  \hskip-0.1in\normalsize{\bf CHAPTER} \hskip1.5in
+ \normalsize\hspace{1em}{\bf TOPIC}\hskip4cm
+ \normalsize{\bf PAGE~NUMBER}
+  \vskip1cm
+    \newlength{\@defbaselineskip}
+  \setlength{\@defbaselineskip}{\baselineskip}
+  \setlength{\baselineskip}{\tclineskip}
+  \@starttoc{toc}
+  
+  %\addcontentsline{toc}{chapter}{\hskip0.7in \normalfont KANDUNGAN}
+  
+  \setlength{\baselineskip}{\@defbaselineskip}
+  \if@restonecol\twocolumn\fi
+  \relax}
+  
+% -------------------------------------------------------------------

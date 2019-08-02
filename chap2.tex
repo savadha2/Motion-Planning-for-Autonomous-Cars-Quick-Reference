@@ -1,0 +1,85 @@
+%--------------
+\chapter{Control}
+\section{PID}
+\section{LQR}
+Linear Quadratic Regulator is an optimal controller for linear systems and a quadratic cost function. It drives the states to zeros while keeping the control input small. It can be extended to
+\begin{enumerate}[topsep=0pt,itemsep=2pt,parsep=0pt,partopsep=0pt]
+    \item Regularization of non-linear system to a non-zero fixed point
+    \item Penalize rate of change of control inputs i.e for example jerk
+    \item Trajectory tracking for non-linear systems
+    \item Linear Time Varying (LTV) systems
+    \item Stochastic Systems
+    \item Affine systems
+\end{enumerate}
+\subsection{Problem formulation}
+The finitie horizon LQR problem is to find control inputs that minimizes 
+$$J=\sum_{k=0}^N(x_k^TQx_k + u_k^TRu_k)$$, with $Q\succ0$ and $R\succ0$, $Q$ and $R$ are positive semi-definite matrices, subject to 
+$$x_{k+1}=Ax_{k}+Bu_{k}$$
+When $N$ is $\inf$, the problem is infinite horizon problem.
+Since $Q$ and $R$ are positive semi-definite, any $x$ or $u$ that are not zeros will yield a positive cost by definition.
+\subsection{Examples}
+\subsubsection{Leader following}
+For this problem, let's consider kinematic models in 1D. (The 2D motion can be reduced to under the assumption that the leader and the ego do not have any lateral movement and move on a straight road and appropriately attaching a coordinate system). Assuming our prediction module is perfect, we will model the leader as
+\begin{align}
+    s_{k+1}^{leader} &= s_{k}^{leader} + v_{k}^{leader} \delta t \\
+    v_{k+1}^{leader} &= v_{k}^{leader}
+\end{align}
+$v_{k}$ is the longitudinal speed of all vehicles and is known at all time steps (from an on-board perception module).
+The ego or the self vehicle that is controlled is modeled as
+\begin{align}
+    s_{k+1}^{ego} &= s_{k}^{ego} + v_{k}^{ego}~\delta t + 0.5~a_{k}^{ego}~\delta t^2 \\
+    v_{k+1}^{ego} &= v_{k}^{ego} + a_{k}^{ego}~\delta t \\
+    a_{k+1}^{ego} &= u_{k}^{ego}
+\end{align}
+where $u_{k}$ is the control input to our system.
+The goal is to follow the leader while maintaining a distance greater than or equal to $L_{sep}$. Let's redefine the state of our system as
+\begin{align}
+    s_{k+1} &= s_{k+1}^{leader} - s_{k+1}^{ego} - L_{sep} \\
+    v_{k+1} &= v_{k+1}^{leader} - v_{k+1}^{ego} \\
+    a_{k+1} &=  - u_{k}^{ego} 
+\end{align}
+Rewriting the matrix form with $x_{k}=\begin{bmatrix}s_{k} \\ v_{k} \\ a_{k}\end{bmatrix}$, the system is defined by
+\begin{align}
+    x_{k+1} &= Ax_{k} + Bu_{k}
+\end{align}
+with $$A=\begin{bmatrix}1 & \delta t & 0.5\delta t^2 \\ 0 & 1 & \delta t \\ 0 & 0 & 0 \end{bmatrix}$$ and $$B=\begin{bmatrix} 0 \\ 0\\ -1 \end{bmatrix}$$. The goal is to drive the system states to zeros while minimizing the control effort. In this formulation, the control effort gets penalized twice as it is part of the state as well. So $Q$ and $R$ should be chosen carefully.
+
+\shabox{Notice that in the formulation, there is nothing preventing ego vehicle from crossing the leader and then maintaining $L_{sep}$ apart from the control cost. There is also nothing preventing the system from commanding high acceleration or deceleration between consecutive steps $\implies$ uncomfortable ride. (which could happen based on the initial conditions)}
+
+
+One way to address the second problem is to increase entries in $R$ i.e. penalize control effort a lot but this will also imply slow convergence and still nothing prevents it from giving large $\delta u$. To address this issue one can penalize $\delta u$ in the cost function. The problem can be reformulated with $\delta u$ as the control input i.e rate of change of acceleration as control input. The equations are now
+\begin{align}
+    s_{k+1} &= s_{k+1}^{leader} - s_{k+1}^{ego} - L_{sep} \\
+    v_{k+1} &= v_{k+1}^{leader} - v_{k+1}^{ego} \\
+    a_{k+1} &=  a_{k} + u_{k-1}^{ego}- u_{k}^{ego} \\
+    \implies a_{k+1} &= a_{k} - \Delta u_{k}
+\end{align}
+where $\Delta u_{k} = u_{k}^{ego}- u_{k-1}^{ego}$
+In matrix form the $A$ and $B$ matrices are transformed to
+
+The typical way to go about penalizing change in control inputs for this problem is to initially start with $x$ as two states (position and speed), then augmenting the state vector with control input as the third state (position, speed and acceleration/control input) and a change in the control input (change in acceleration) as the control input.
+\iffalse
+\begin{align}
+    x'_{k+1} &= A'x'_{k} + B'u'_{k}
+\end{align}
+with $x'_{k}=\begin{bmatrix}s_{k} \\ v_{k} \\ a_{k} \\u_{k}\end{bmatrix}$
+, $A'=\begin{bmatrix}1 & \delta t & 0.5\delta t^2  & 0\\ 0 & 1 & \delta t & 0\\ 0 & 0 & 0 & -1 \\ 0 & 0 & 0 & 1 \end{bmatrix}$ and $B'=\begin{bmatrix} 0 \\0 \\ -1 \\ 1 \end{bmatrix}$ and $u'_{k}=u_{k} - u_{k-1}=\Delta u_{k}$
+\fi
+\subsubsection{Trajectory tracking}
+\paragraph{Problem} The trajectory tracking problem is to compute a sequence of control input $u_1, u_2, ..., u_{H-1}$ so that a state sequence $x_0^*, x_1^*, ..., x_H^*$ is attainable such that $x_{t+1}=f(x_t, u_t)$ while minimizing the cost function $\sum_{i=0}^{H-1}(x_i - x_i^*)^T Q (x_i - x_i^*) + (u_i - u_i^*)^T R (u_i - u_i^*)$ where $u_i^*, i=0 to H-1$ is a control input that ensures feasibility i.e. $x_{t+1}^*=f(x_t^*, u_t^*) {} \forall t \in \{0, 1, ..., H-1\}$
+\paragraph{Example}
+The trajectory tracking problem for non-linear systems can be transformed to LQR for Linear Time Varying case via linearization. If the input trajectory is not feasible, the computed solution will not visit the desired states.
+Let's once again consider the example of cruise control. The objective is to regulate the longitudinal speed of the vehicle using LQR. In this case, it is sufficient to consider longitudinal dynamics alone. Let the reference speed to be tracked be given by
+\begin{align}
+    v(t) &= 10|\sin(0.4\pi t)|
+\end{align}
+\subsection{Derivation}
+\subsubsection{Dynamic Programming}
+\subsubsection{Hamiltonian}
+\subsection{Relation to $H_2$ controller}
+\section{MPC}
+\subsection{Stability}
+\section{Other}
+\subsection{Feedback Linearization}
+\subsection{Lyapunov Controller}
+\subsection{Notes on Stability}

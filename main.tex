@@ -1,0 +1,155 @@
+\documentclass[12pt,fleqn]{book}
+\usepackage{amsmath} %utk masuk begin{align}
+\usepackage{amsxtra}%supaya \eqref
+\usepackage{amsopn}%supaya dapat declare benda baru \citep
+\usepackage{amsbsy}
+\usepackage{amstext}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{shadow}% kotak shadow
+\usepackage{chaptengah}
+\usepackage{curves}
+\usepackage{graphicx}
+\usepackage{color}%masukan color
+\usepackage{maple2e}
+%\usepackage{flafter}
+\usepackage{afterpage}
+%\usepackage{tocloft}
+\usepackage{XTocinc}% utk center contents, masuk chapter, topic dan page number
+%  bila masuk ini jadi bold tex
+%\usepackage[bottom=0.5in]{geometry}
+\usepackage{lipsum}
+\usepackage{imakeidx}
+\makeindex
+%-----------------------
+\usepackage{titletoc} 
+\makeatletter
+\renewcommand*{\@dotsep}{999}% untuk buang dotted line besar nombor spt spt 999
+\makeatother
+\newtheorem{ts}{Task}
+%------------------------
+%--------%---
+%
+%\titlecontents{section}[1.5em]
+ % {\bfseries}
+  %{\contentslabel{2em}}
+  %{\hspace*{-2.3em}}
+  %{\titlerule*[1pc]{.}\contentspage} 
+\usepackage{natbib}
+\usepackage{enumitem}
+%\makeindex
+ \citestyle{mn}%\documentclass[11pt,fleqn]{report}
+
+%\usepackage{mn}
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{cor}[thm]{Corollary}
+%\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+%
+%\theoremstyle{Example}
+\newtheorem{exl}{Example}[section]
+%
+\newcommand{\sn}{\textbf{Solution}}
+\theoremstyle{plain}
+%\newtheorem{thm}{Theorem}[section]
+%\newtheorem{cor}[thm]{Corollary}
+%\newtheorem{lem}[thm]{Lemma}
+%\newtheorem{prop}[thm]{Proposition}
+%
+\theoremstyle{Example}
+%\newtheorem{exl}{Example}%section]
+\theoremstyle{Question}
+\newtheorem{qs}{Question}
+\theoremstyle{Task}
+%\newtheorem{ts}{Task}
+\theoremstyle{Solution Task}
+\newtheorem{sots}{Answer}
+\theoremstyle{Exercise}
+\newtheorem{ex}{Exercise}%section]
+
+%
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}[section]
+%
+\theoremstyle{solution}
+\newtheorem{so}{Solution}
+%\theoremstyle{}
+%\newtheorem{qs}{}[]
+
+\theoremstyle{remark}
+\newtheorem{rem}{Remark}[section]
+\newcommand{\Lim}{\mathop{\mathrm{\lim}}\limits}
+
+%
+
+
+%\theoremstyle{Problem Solving}
+\newtheorem{prob}{Problem Solving}[chapter]
+%
+%\theoremstyle{Solution to Problem}
+\newtheorem{sop}{Solution to Problem Solving}[chapter]
+%
+%\theoremstyle{Solution}
+%\newtheorem{so}{Solution}[section]
+%---------
+%
+%\newcommand{\Lim}{\mathop{\mathrm{\lim}}\limits}
+\newcommand{\A}{\mathop{\mathrm{A}}\limits}
+\newcommand{\B}{\mathop{\mathrm{B}}\limits}
+\newcommand{\C}{\mathop{\mathrm{C}}\limits}
+\newcommand{\D}{\mathop{\mathrm{D}}\limits}
+\newcommand{\E}{\mathop{\mathrm{E}}\limits}
+\newcommand{\ra}{\mathop{\longrightarrow\longrightarrow}\limits}
+
+%\theoremstyle{Question}
+%\newtheorem{qs}{Question}
+%------------------
+%\theoremstyle{definition}
+%\newtheorem{defn}{Definition}[section]
+%
+%\theoremstyle{Key Term}
+\newtheorem{term}{Key Term}[section]
+
+%\theoremstyle{remark}
+%\newtheorem{rem}{Remark}[section]
+%
+%\newtheorem{exl}{Example}[section]
+%\newtheorem{so}{Solution}[section]
+%\newtheorem{la}{\mathfrak{L}\{\}}[section]
+\newcommand{\lap}{\mathop{\mathfrak{L}}\limits}
+%--------------------
+\newcommand{\mut}{\mathop{\mathfrak{U}}\limits}
+\newcommand{\lapi}{\mathop{\mathfrak{L}^{-1}}\limits}
+%---------
+
+\oddsidemargin 0.6cm \evensidemargin 0in
+%\addtolength{\hoffset}{3.0cm}
+\marginparwidth 15pt \marginparsep 7pt
+\topmargin 1.5cm %asal1.5
+\headsep 1.0cm %asal 1.1
+\addtolength{\voffset}{-2.6cm}%adjust 1.25m page no. dari tepi atas
+\textheight 22.0cm \textwidth 16.0cm %asal 25.2
+%\voffset=0.25cm
+\headheight=13pt
+\setcounter{chapter}{0}
+\pagestyle{headings}
+%\pagestyle{plain}
+%\setcounter{page}{8}
+\begin{document}
+\setcounter{tocdepth}{4}    %How many levels to include in TOC
+\addtocontents{toc}{\protect\sloppy}    %Keeps long chapters within page # margins
+\pagenumbering{roman}
+\tableofcontents
+\include{chap1}
+\include{chap2}
+\include{chap3}
+\include{chap4}
+\include{chap5}
+\include{chap6}
+\include{chap7}
+\bibliographystyle{mn}
+\bibliography{cuba}
+\printindex
+\end{document}
