@@ -75,14 +75,26 @@ Let's consider the example of cruise control. The objective is to regulate the l
 \end{align}
 Assuming that there is no wind and no gradient, the simplified longitudinal dynamics can be written as
 \begin{align}
-    m\dot{v} &= u - F_{friction} - F_{drag}  \\
+    m\dot{v} &= u - F_{friction} - F_{drag}  \label{chap_2:eq:long_traj_tracking}\\ 
 \end{align}
 For the sake of simplicity, let's consider the RMS of speed and acceleration and to derive the nominal control input. RMS is the value that the system will see when the input is applied.
 The following parameters will be used 
 $m = 1000$, $F_{drag} = 0.5 * \rho * A * C_d * V_{rms}^2$ with $\rho = 1$, $C_d =0.6$, $A = 3$, $V_{rms} = 10/\sqrt{2} = 7.07$ i.e. $F_{drag}=44.98 N$, $F_{friction}=C_r*V_{rms}$, $C_r=0.3$ and so $F_{friction}=2.12 N$. RMS of acceleration $\dot{v}$ is $0.45$.
-The nominal control input $u$ can then be computed as $u = 1000 * 0.45 + 44.98 + 2.12$ i.e. $u=497.1 N$.
+The nominal control input $u$ can then be computed as $u = 1000 * 0.45 + 44.98 + 2.12$ i.e. $u^{*}=497.1 N$.
 
 Next let's linearize the system around the nominal control input and the state at time $t$.
+Using the method discussed in Section~\ref{chap_1:sec:linearization}, the linearized model is
+\begin{align}
+    m\dot{\delta v} &= \delta u - C_r  \delta v - \rho C_d  A  v  \delta v \label{chap_2:eq:linearized_long_traj_tracking} \\
+\end{align}
+where $v$ represents the operating point at which linearization is performed
+Let's now verify the accuracy of linearization when $v=10$ $\implies$ $\dot{v}=-0.45$ and $\delta v = 2.93$
+\begin{enumerate}
+    \item Using (~\ref{chap_2:eq:long_traj_tracking}), we get $u=93$ $N$
+    \item Using (~\ref{chap_2:eq:linearized_long_traj_tracking}), we have $\dot{\delta v} = -0.45$, $\delta v = 10-7.07=2.93$ $\implies$ $\delta u = -450 + 0.879 + 52.74 = -396.38 $. From this $u = u^{*} + \delta u = 497.1 - 396.38 = 100.72$ $N$
+    \item The estimates are close but not close enough. This is because $\delta v = 2.93$ is a large number. The contributions of the Higher Order Terms (H.O.T) which were neglected in the linearization will contribute to errors. So, when linearizing make sure that the $\delta$'s are small. Had we chosen the operating point to be $8 m/s$, the estimates would be much closer. This means that the input trajectory should be feasible and close to the optimal. (verify this statement)
+\end{enumerate}
+Next let's design the cost function for this example
 \subsection{Derivation}
 \subsubsection{Dynamic Programming}
 \subsubsection{Hamiltonian}
