@@ -96,9 +96,9 @@ Let's now verify the accuracy of linearization when $v=10$ $\implies$ $\dot{v}=-
 \end{enumerate}
 Next let's design the cost function for this example. To make life easier and avoid integrals, lets discretized the linearized system. The equations for the discretized system are given by
 \begin{align}
-    m\delta v_{k+1} = m\delta v_{k} - C_r \delta v_{k} \delta t - \rho C_d A v \delta v_{k} + u \delta t \\
+    m\delta v_{k+1} = m\delta v_{k} - C_r \delta v^{*}_{k} \delta t - \rho C_d A v \delta v_{k} + u \delta t \\
     \implies
-    \delta v_{k+1} = \left(1 - C_r \delta t - \rho C_d A v_{k}^{*} \delta t\right)\delta v_{k} + u \delta t
+    \delta v_{k+1} = \left(1 - \frac{C_r \delta t}{m} - \frac{\rho C_d A v_{k}^{*} \delta t}{m}\right)\delta v_{k} + \delta u \delta t
 \end{align}
 where $\delta t$ is the sampling time and $v_{k}^{*}$ is the target/desired speed at time step $k$
 \subsection{Derivation}
