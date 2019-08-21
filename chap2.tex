@@ -90,11 +90,17 @@ Using the method discussed in Section~\ref{chap_1:sec:linearization}, the linear
 where $v$ represents the operating point at which linearization is performed
 Let's now verify the accuracy of linearization when $v=10$ $\implies$ $\dot{v}=-0.45$ and $\delta v = 2.93$
 \begin{enumerate}
-    \item Using (~\ref{chap_2:eq:long_traj_tracking}), we get $u=93$ $N$
+    \item Using (~\ref{chap_2:eq:long_traj_tracking}), we get $u=93$ $N$ 
     \item Using (~\ref{chap_2:eq:linearized_long_traj_tracking}), we have $\dot{\delta v} = -0.45$, $\delta v = 10-7.07=2.93$ $\implies$ $\delta u = -450 + 0.879 + 52.74 = -396.38 $. From this $u = u^{*} + \delta u = 497.1 - 396.38 = 100.72$ $N$
-    \item The estimates are close but not close enough. This is because $\delta v = 2.93$ is a large number. The contributions of the Higher Order Terms (H.O.T) which were neglected in the linearization will contribute to errors. So, when linearizing make sure that the $\delta$'s are small. Had we chosen the operating point to be $8 m/s$, the estimates would be much closer. This means that the input trajectory should be feasible and close to the optimal. (verify this statement)
+    \item The estimates are close but not close enough. This is because $\delta v = 2.93$ is a large number. The contributions of the Higher Order Terms (H.O.T) which were neglected in the linearization will contribute to errors. So, when linearizing make sure that the $\delta$'s are small. Had we chosen the operating point to be $8 m/s$, the estimates would be much closer. The resolution of discretization used to solve the problem affects the accuracy of linearization.
 \end{enumerate}
-Next let's design the cost function for this example
+Next let's design the cost function for this example. To make life easier and avoid integrals, lets discretized the linearized system. The equations for the discretized system are given by
+\begin{align}
+    m\delta v_{k+1} = m\delta v_{k} - C_r \delta v_{k} \delta t - \rho C_d A v \delta v_{k} + u \delta t \\
+    \implies
+    \delta v_{k+1} = \left(1 - C_r \delta t - \rho C_d A v_{k}^{*} \delta t\right)\delta v_{k} + u \delta t
+\end{align}
+where $\delta t$ is the sampling time and $v_{k}^{*}$ is the target/desired speed at time step $k$
 \subsection{Derivation}
 \subsubsection{Dynamic Programming}
 \subsubsection{Hamiltonian}
