@@ -71,7 +71,7 @@ with $x'_{k}=\begin{bmatrix}s_{k} \\ v_{k} \\ a_{k} \\u_{k}\end{bmatrix}$
 The trajectory tracking problem for non-linear systems can be transformed to LQR for Linear Time Varying case via linearization. If the input trajectory is not feasible, the computed solution will not visit the desired states.
 Let's consider the example of cruise control. The objective is to regulate the longitudinal speed of the vehicle using LQR. In this case, it is sufficient to consider longitudinal dynamics alone. Let the reference speed to be tracked be given by
 \begin{align}
-    v(t) &= 10|\sin(0.2\pi t)|
+    v(t) &= 10|\sin(0.2\pi t)| \label{chap_2:eq:vel_traj}
 \end{align}
 Assuming that there is no wind and no gradient, the simplified longitudinal dynamics can be written as
 \begin{align}
@@ -79,13 +79,23 @@ Assuming that there is no wind and no gradient, the simplified longitudinal dyna
 \end{align}
 For the sake of simplicity, let's consider the RMS of speed and acceleration and to derive the nominal control input. RMS is the value that the system will see when the input is applied.
 The following parameters will be used 
-$m = 1000$, $F_{drag} = 0.5 * \rho * A * C_d * V_{rms}^2$ with $\rho = 1$, $C_d =0.6$, $A = 3$, $V_{rms} = 10/\sqrt{2} = 7.07$ i.e. $F_{drag}=44.98 N$, $F_{friction}=C_r*V_{rms}$, $C_r=0.3$ and so $F_{friction}=2.12 N$. RMS of acceleration $\dot{v}$ is $0.45$.
-The nominal control input $u$ can then be computed as $u = 1000 * 0.45 + 44.98 + 2.12$ i.e. $u^{*}=497.1 N$.
+\begin{itemize}
+\item[] $m = 1000$
+\item[] $\rho = 1$
+\item[] $C_d =0.6$
+\item[] $A = 3$
+\item[] $C_r=0.3$
+\item[] $V_{rms} = 10/\sqrt{2} = 7.07$
+\item[] $F_{drag} = 0.5 * \rho * A * C_d * V_{rms}^2$ $\implies$ $F_{drag}=44.98 N$, 
+\item[] $F_{friction}=C_r*V_{rms}$ $\implies$ $F_{friction}=2.12 N$. 
+\item[] RMS of acceleration $\dot{v}$ is $0.45$.
+\end{itemize}
+The nominal control input $u = 1000 * 0.45 + 44.98 + 2.12$ i.e. $u^{*}=497.1 N$.
 
 Next let's linearize the system around the nominal control input and the state at time $t$.
 Using the method discussed in Section~\ref{chap_1:sec:linearization}, the linearized model is
 \begin{align}
-    m\dot{\delta v} &= \delta u - C_r  \delta v - \rho C_d  A  v  \delta v \label{chap_2:eq:linearized_long_traj_tracking} \\
+    m\dot{\delta v} &= \delta u - C_r  \delta v - \rho C_d  A  v  \delta v \label{chap_2:eq:linearized_long_traj_tracking} 
 \end{align}
 where $v$ represents the operating point at which linearization is performed
 Let's now verify the accuracy of linearization when $v=10$ $\implies$ $\dot{v}=-0.45$ and $\delta v = 2.93$
@@ -94,13 +104,25 @@ Let's now verify the accuracy of linearization when $v=10$ $\implies$ $\dot{v}=-
     \item Using (~\ref{chap_2:eq:linearized_long_traj_tracking}), we have $\dot{\delta v} = -0.45$, $\delta v = 10-7.07=2.93$ $\implies$ $\delta u = -450 + 0.879 + 52.74 = -396.38 $. From this $u = u^{*} + \delta u = 497.1 - 396.38 = 100.72$ $N$
     \item The estimates are close but not close enough. This is because $\delta v = 2.93$ is a large number. The contributions of the Higher Order Terms (H.O.T) which were neglected in the linearization will contribute to errors. So, when linearizing make sure that the $\delta$'s are small. Had we chosen the operating point to be $8 m/s$, the estimates would be much closer. The resolution of discretization used to solve the problem affects the accuracy of linearization.
 \end{enumerate}
-Next let's design the cost function for this example. To make life easier and avoid integrals, lets discretized the linearized system. The equations for the discretized system are given by
+
+Now let's design the cost function for this example. To make life easier and avoid integrals, lets discretized the linearized system. The equations for the discretized system are given by
 \begin{align}
     m\delta v_{k+1} = m\delta v_{k} - C_r \delta v^{*}_{k} \delta t - \rho C_d A v \delta v_{k} + u \delta t \\
     \implies
     \delta v_{k+1} = \left(1 - \frac{C_r \delta t}{m} - \frac{\rho C_d A v_{k}^{*} \delta t}{m}\right)\delta v_{k} + \delta u \delta t
 \end{align}
 where $\delta t$ is the sampling time and $v_{k}^{*}$ is the target/desired speed at time step $k$
+The cost function for the above system is of the form
+\begin{align*}
+    \sum_{k=1}^{N}q\left(v_{k} - v^{*}_{k}\right)^2 + \sum_{k=1}^{N}r\left(u_{k} - u^{*}_{k}\right)^2
+\end{align*}
+where $N$ is the horizon. For example, if the time horizon we are looking at $T$=$5$ seconds, and $dt=0.1$, then $N=50$, $q$ is the penalty on state deviation and is a scalar (since the system is 1D) and $r$, is the penalty on control input deviation and is a scalar (1D).
+$v_{k}^{*}$ is determined by~(\ref{chap_2:eq:vel_traj}) and $u_{k}^{*} = 497.1$ $\forall$ $k$ $\in$ $\{1, 2, 3, ... N\}$.
+
+
+In this specific example we chose $q=10$ and $r=1$. We chose a low $r$ allow deviation in control as it is not a feasible control input for the states we want to visit. We chose a high $q$ (compared to $r$) as we would like to get sufficiently close to the desired state sequences.
+
+\shabox{If the input trajectory is feasible, why do we need LQR?. For example, in the above case, open loop control inputs can be computed by inverting the dynamics as a function of the desired states. If we did this, why doe we need LQR - use the computed control input directly}
 \subsection{Derivation}
 \subsubsection{Dynamic Programming}
 \subsubsection{Hamiltonian}
