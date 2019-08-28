@@ -122,7 +122,13 @@ $v_{k}^{*}$ is determined by~(\ref{chap_2:eq:vel_traj}) and $u_{k}^{*} = 497.1$ 
 
 In this specific example we chose $q=10$ and $r=1$. We chose a low $r$ allow deviation in control as it is not a feasible control input for the states we want to visit. We chose a high $q$ (compared to $r$) as we would like to get sufficiently close to the desired state sequences.
 
-\shabox{If the input trajectory is feasible, why do we need LQR?. For example, in the above case, open loop control inputs can be computed by inverting the dynamics as a function of the desired states. If we did this, why doe we need LQR - use the computed control input directly}
+\shabox{If the input trajectory is feasible, why do we need LQR?. For example, in the above case, open loop control inputs can be computed by inverting the dynamics as a function of the desired states. If we did this, why doe we need LQR - use the computed control input directly.}
+
+
+Generally, approximate trajectory (state and control) is computed using a reduced order model of the system. Such an approach gets the state and control sequences close to a feasible/optimal trajectory. Then LQR (or another approach) can be used with higher order model dynamics to improve the controls. One should also be careful in aligning the cost functions across various stages of development. The general approach is to segment the problem into path, trajectory and control modules where the solution from one module feeds into the other improving it successively via additional constraints and model order with appropriate cost functions. There are other reasons too and this is one of them. 
+
+In the example above, we could augment the system with additional equations for representing the lower level control. For example the computed control input might not be translated or transferred to the actuators instantaneously. One could use a first order model to represent the system. But using the model could complicate trajectory generation module. So, partitioning it will make life easier and could also ease compute time issues.
+
 \subsection{Derivation}
 \subsubsection{Dynamic Programming}
 \subsubsection{Hamiltonian}
