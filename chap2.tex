@@ -13,7 +13,11 @@ Linear Quadratic Regulator is an optimal controller for linear systems and a qua
 \end{enumerate}
 \subsection{Problem formulation}
 The finitie horizon LQR problem is to find control inputs that minimizes 
-$$J=\sum_{k=0}^N(x_k^TQx_k + u_k^TRu_k)$$, with $Q\succ0$ and $R\succ0$, $Q$ and $R$ are positive semi-definite matrices, subject to 
+\begin{align}
+    J=\sum_{k=0}^N(x_k^TQx_k + u_k^TRu_k) \label{eq:chap2_lqr_cost}
+\end{align}
+
+with $Q\succ0$ and $R\succ0$, $Q$ and $R$ are positive semi-definite matrices, subject to 
 $$x_{k+1}=Ax_{k}+Bu_{k}$$
 When $N$ is $\inf$, the problem is infinite horizon problem.
 Since $Q$ and $R$ are positive semi-definite, any $x$ or $u$ that are not zeros will yield a positive cost by definition.
@@ -131,6 +135,49 @@ In the example above, we could augment the system with additional equations for 
 
 \subsection{Derivation}
 \subsubsection{Dynamic Programming}
+We will use bottom up DP approach for coming up with the solution.
+We will use the following identity 
+\begin{align}
+    \frac{d(x^TAx)}{dx} &= x^T(A^T+A)
+\end{align}
+If $A$ is symmetric
+\begin{align}
+    \frac{d(x^TAx)}{dx} &= x^T(A^T+A)=2x^TA=2A^Tx=2Ax
+\end{align}
+Let's look at the equation~\ref{eq:chap2_lqr_cost}. We can write the optimization problem as
+\begin{align}
+    J^*(x) &= \argmin_{u_k, for k \in \{1, 2, ..., N-1\}}\sum_{k=0}^{N-1}\left[x_k^TQx_k + u_k^TRu_k \right] + x^T_NP_Nx_N
+\end{align}
+assuming the control input $u_N=0$
+we have
+\begin{align}
+    J(x_{N}) &= x_N^TP_NX_N \\
+    \implies J(x_N) &= (Ax_{N-1}+Bu_{N-1})^TP_N(Ax_{N-1}+Bu_{N-1})\\
+    J^*(x_{N-1}) &= \argmin_{u_{N-1}}\left[x_{N-1}^TQx_{N-1} + u_{N-1}^TRu_{N-1} + J^*(x_N)\right] \\
+\end{align}
+\begin{dmath*}
+    \implies J^*(x_{N-1}) = \argmin_{u_{N-1}}\left[x_{N-1}^TQx_{N-1} + u_{N-1}^TRu_{N-1} +  (Ax_{N-1}+Bu_{N-1})^TP_N(Ax_{N-1}+Bu_{N-1})\right]
+\end{dmath*}
+As $u_{N-1}$ does not depend on $x_{N-1}$ and $J(x_{N-1})$ denotes the cost to go from $x_{N-1}$ to $x_{N}$ and $*$ denotes the optimal cost or input corresponding to the optimal cost.
+For minimizing $J(x_{N-1})$, we set $\frac{\partial (x_{N-1})}{\partial u_{N-1}} = 0$ which results in
+\begin{align}
+    & Ru^*_{N-1} + (Ax_{N-1}+Bu^*_{N-1})^TP_NB = 0 \\
+    \implies & Ru^*_{N-1} + B^TP_N(Ax_{N-1}+Bu^*_{N-1}) = 0 \\
+    \implies & u^*_{N-1} = -(R+B^TP_NB)^{-1}B^TP_NAx_{N-1}
+\end{align}
+Now $J(x_{N-1})$ can be reloaded using the above equation as
+\begin{dmath*}
+    J^*(x_{N-1}) = \left[x_{N-1}^TQx_{N-1} + (K_{N-1}x_{N-1})^TR(K_{N-1}x_{N-1}) + (Ax_{N-1}-BK_{N-1}x_{N-1})^TP_N(Ax_{N-1}-BK_{N-1}x_{N-1})\right]
+\end{dmath*}
+with $$K_{N-1} = -(R+B^TP_NB)^{-1}B^TP_NA$$
+$J^*(x_{N-1})$ can now be rewritten as 
+\begin{align}
+    J^*(x_{N-1}) &= x_{N-1}^TP_{N-1}x_{N-1}
+\end{align}
+with
+$$P_{N-1}= Q+K^T_{N-1}RK_{N-1}+(A-BK_{N-1})^TP_{N}(A-BK_{N-1})$$
+The above expression now can be used to comute $u^*_{N-2}$ by looking at $J(x_{N-2})$ similar to the derivation above.
+This concludes the derivation using DP approach
 \subsubsection{Hamiltonian}
 \subsection{Relation to $H_2$ controller}
 \section{MPC}
