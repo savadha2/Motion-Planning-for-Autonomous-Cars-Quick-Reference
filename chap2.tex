@@ -146,7 +146,7 @@ If $A$ is symmetric
 \end{align}
 Let's look at the equation~\ref{eq:chap2_lqr_cost}. We can write the optimization problem as
 \begin{align}
-    J^*(x) &= \argmin_{u_k, for k \in \{1, 2, ..., N-1\}}\sum_{k=0}^{N-1}\left[x_k^TQx_k + u_k^TRu_k \right] + x^T_NP_Nx_N
+    J^*(x) &= \argmin_{u_k, for k \in \{1, 2, ..., N-1\}}\sum_{k=0}^{N-1}\left[x_k^TQx_k + u_k^TRu_k \right] + x^T_NP_Nx_N \label{eq:chap2_lqr_deriv_cost}
 \end{align}
 assuming the control input $u_N=0$
 we have
@@ -176,9 +176,45 @@ $J^*(x_{N-1})$ can now be rewritten as
 \end{align}
 with
 $$P_{N-1}= Q+K^T_{N-1}RK_{N-1}+(A-BK_{N-1})^TP_{N}(A-BK_{N-1})$$
-The above expression now can be used to comute $u^*_{N-2}$ by looking at $J(x_{N-2})$ similar to the derivation above.
+The above expression now can be used to compute $u^*_{N-2}$ by looking at $J(x_{N-2})$ similar to the derivation above.
 This concludes the derivation using DP approach
 \subsubsection{Hamiltonian}
+We can also derive the equations using Hamiltonian and the associated optimality conditions. The derivation proceeds as below.
+Let's use the cost function defined by (\ref{eq:chap2_lqr_deriv_cost}).
+
+For this form of derivation, we redefine the cost function as (represent $J(x)$ as $J$)
+\begin{dmath*}
+    J = \sum_{k=0}^{N-1}\left[x_k^TQx_k + u_k^TRu_k + \lambda_{k+1}^T (Ax_k+Bu_k - x_{k+1})\right] + x^T_NP_Nx_N
+\end{dmath*}
+In essence, you are absorbing the equality constraint (the model) into the cost-function and $\lambda_k$'s are called the co-state variables and are a function of time/step.
+The Hamiltonian is defined as
+\begin{align}
+    H_k(x_k, u_k, \lambda_{k+1}) = H_k &= x_k^TQx_k + u_k^TRu_k + \lambda_{k+1}^T (Ax_k+Bu_k)
+\end{align}
+The cost function now is
+\begin{align}
+    J &= x^T_NP_Nx_N +  \sum_{k=0}^{N-1}\left[H_k - \lambda_{k+1}^Tx_{k+1})\right]
+\end{align}
+Next we we compute $\delta J$ and set it to zero.
+\begin{align}
+    \delta J &= \frac{\partial{J}}{\partial x} \delta x + \frac{\partial{J}}{\partial u} \delta u \\
+    \implies \delta J &= Px_N - \lambda_N + \sum_{k=0}^{N-1}\left[\frac{\partial{H_k}}{\partial x} - \lambda_{k}^T + \frac{\partial{H_k}}{\partial u})\right]
+\end{align}
+For $\delta J$ to be zero (first order necessary conditions) and as $\lambda$ is arbitrary, we choose them to make $\delta J = 0$ that is
+\begin{align}
+    & \lambda_N = Px_N \\
+    & \frac{\partial{H_k}}{\partial u} = 0 \\
+    & \lambda_{k} = {\frac{\partial{H_k}}{\partial x}}^T
+\end{align}
+which results in 
+\begin{align}
+    & \lambda_N = Px_N \\
+    & u_k^TR^T = \lambda_{k+1}^TB\\
+    \implies &u_k = R^{-1}B^T\lambda_{k+1} \\
+    & \lambda_{k} = \lambda_{k+1}^TA + x_k^TQ^T \\
+    \implies &\lambda_{k} = A^T\lambda_{k+1} + Qx_k
+\end{align}
+
 \subsection{Relation to $H_2$ controller}
 \section{MPC}
 \subsection{Stability}
