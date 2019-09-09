@@ -209,12 +209,32 @@ For $\delta J$ to be zero (first order necessary conditions) and as $\lambda$ is
 which results in 
 \begin{align}
     & \lambda_N = Px_N \\
-    & u_k^TR^T = \lambda_{k+1}^TB\\
-    \implies &u_k = R^{-1}B^T\lambda_{k+1} \\
+    & u_k^TR^T = -\lambda_{k+1}^TB\\
+    \implies &u_k = -R^{-1}B^T\lambda_{k+1} \\
     & \lambda_{k} = \lambda_{k+1}^TA + x_k^TQ^T \\
     \implies &\lambda_{k} = A^T\lambda_{k+1} + Qx_k
 \end{align}
 
+We chose $\lambda_k = P_kx_k$ (as we expect the control to be a function of states and control as given in the above equations is a function of $\lambda$).
+From the above equations, we have
+\begin{align}
+    & Ru_k = -B^T\lambda_{k+1} \\
+    \implies & Ru_k = -B^TP_{k+1}x_{k+1} \\
+    \implies & Ru_k = -B^TP_{k+1}(Ax_k + Bu_k) \\
+    \implies & u_k = -(R+B^TP_{k+1}B)^{-1}B^TP_{k+1}Ax_k
+\end{align}
+The co-state equations are
+\begin{dmath}
+     \lambda_{k} = A^T\lambda_{k+1} + Qx_k
+     \implies  P_kx_k = A^TP_{k+1}(Ax_k+Bu_k) + Qx_k \\
+     \implies  P_kx_k = A^TP_{k+1}Ax_k - A^TP_{k+1}B(R+B^TP_{k+1}B)^{-1}B^TP_{k+1}Ax_k + Qx_k
+\end{dmath}
+The above equation holds for $\forall k$.
+So
+\begin{align}
+     P_k = A^TP_{k+1}A - A^TP_{k+1}B(R+B^TP_{k+1}B)^{-1}B^TP_{k+1}A + Q
+\end{align}
+This completes the derivation. The two forms derived above are equivalent  - also called the algebriac Riccati equation.
 \subsection{Relation to $H_2$ controller}
 \section{MPC}
 \subsection{Stability}
