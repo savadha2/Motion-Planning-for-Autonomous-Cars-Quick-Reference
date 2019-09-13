@@ -242,9 +242,16 @@ The standard setup for $H_2$ or $H_{\infty}$ control is as follows
     z(t) &= C_zx(t) + D_{zw}w(t)+D_{zu}u(t) \\
     y(t) &= C_yx(t) + D_{yw}w(t) + D_{yu}u(t)
 \end{align}
-where $y$ is the output of the system, $w$ is the exogenous input (disturbance), $u$ is the control input and $x$ is the state. $z$ is a virtual output that captures the performance index to be optimized. Typically, $H_2$ and $H_{\infty}$ norms over a class of disturbance inputs are used to compute the transfer function/controller $K$ from output $y$ to input $u$ such that the system is stabilized while minimizing the performance index.
+where $y$ is the output of the system, $w$ is the exogenous input (disturbance), $u$ is the control input and $x$ is the state. $z$ is a virtual output that captures the performance index to be optimized.  
 
-Look at the performance index $z$. Typically norm of $z$ with $H_2$ criteria $=\left\lVert z \right\rVert_2$ and no exogenous input i.e. $w(t)=0 \forall t$ and full state feedback and assuming the system is strictly causal (i.e $D_{yu} = 0$) becomes similar to a LQR controller. In particular, with $C_{zx}=[\sqrt{Q}\quad0]^T$ and $D_{zu}=[0\quad\sqrt{R}]^T$ and will result in $H_2$ norm ($z^tz$) which is the same as the cost function $\int_{0}^{\infty}(x^TQx+u^TRu) dt$ (infinite horizon LQR). This is also tied to LQG optimal control where the measured output is corrupted by noise and we need to estimate the states from measurements. 
+$H_2$ and $H_{\infty}$ norms over a class of disturbance inputs are used to compute the transfer function/controller $K$ from output $y$ to input $u$ such that the system is stabilized while minimizing the performance index.
+
+Look at the performance index $z$. Typically norm of $z$ with $H_2$ criteria $=\left\lVert z \right\rVert_2$ and no exogenous input i.e. $w(t)=0 \forall t$ and full state feedback and assuming the system is strictly causal (i.e $D_{yu} = 0$) becomes similar to a LQR controller. In particular, with $C_{zx}=[\sqrt{Q}\quad0]^T$ and $D_{zu}=[0\quad\sqrt{R}]^T$ and will result in $H_2$ norm ($z^tz$) which is the same as the cost function $\int_{0}^{\infty}(x^TQx+u^TRu) dt$ (infinite horizon LQR). 
+
+This is also tied to LQG optimal control where the measured output is corrupted by noise and we need to estimate the states from measurements. 
+
+LQR/LQG is a special case of $H_2$ control synthesis.
+
 \section{MPC}
 \subsection{Stability}
 \section{Other}
