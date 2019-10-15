@@ -252,6 +252,11 @@ This is also tied to LQG optimal control where the measured output is corrupted 
 
 LQR/LQG is a special case of $H_2$ control synthesis.
 
+\section{Iterative LQR}
+iLQR can be used to compute trajectories/control for non-linear systems. In the example above used for trajectory tracking with LQR, we assumed the nominal input to be the rms. Instead we can more accurately compute the trajectory with higher order dynamics included with iLQR. 
+\shabox{iLQR is a trajectory stabilizer which takes in an input trajectory computed using open loop trajectory generation methods like shooting methods, direct collocation methods and so on. In our example, we simply chose an rms value as the input trajectory.}
+
+The general formulation is
 \section{MPC}
 \subsection{Stability}
 \section{Other}
